@@ -241,7 +241,9 @@
                 (vec (concat (subvec obj 0 idx)
                              [val]
                              (subvec obj (inc idx)))))))
-      (throw (Exception. "Patch path must start with '/'")))
+      (if (or (= path "") (= path "#"))
+        val
+        (throw (Exception. "Patch path must start with '/' or be empty/'#' "))))
     (throw (Exception. (str "Can't replace a value that does not exist at '" path "'.")))))
 
 (defn remove-patch-value
