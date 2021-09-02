@@ -70,7 +70,8 @@
         (let [seg (eval-escape-characters (second match))
               segs (nth match 2)
               [h-path? val] (let [ky (if (vector? obj)
-                                       (Integer/parseInt seg)
+                                       #?(:clj  (Integer/parseInt seg)
+                                          :cljs (js/parseInt seg))
                                        (->key seg))]
                               [(contains? obj ky)
                                (get obj ky)])]
@@ -237,7 +238,8 @@
         (cond (map? obj)
               (assoc obj (->key (second (first segs))) val)
               (vector? obj)
-              (let [idx (Integer/parseInt (second (re-find #"/(\d+)" path)))]
+              (let [idx #?(:clj  (Integer/parseInt (second (re-find #"/(\d+)" path)))
+                           :cljs (js/parseInt      (second (re-find #"/(\d+)" path))))]
                 (vec (concat (subvec obj 0 idx)
                              [val]
                              (subvec obj (inc idx)))))))
