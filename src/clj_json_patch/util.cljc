@@ -245,8 +245,10 @@
                              (subvec obj (inc idx)))))))
       (if (or (= path "") (= path "#"))
         val
-        (throw (Exception. "Patch path must start with '/' or be empty/'#' "))))
-    (throw (Exception. (str "Can't replace a value that does not exist at '" path "'.")))))
+        #?(:clj  (throw (Exception. "Patch path must start with '/' or be empty/'#' "))
+           :cljs (throw (js/Error. "Patch path must start with '/' or be empty/'#' ")))))
+    #?(:clj  (throw (Exception. (str "Can't replace a value that does not exist at '" path "'.")))
+       :cljs (throw (js/Error. (str "Can't replace a value that does not exist at '" path "'."))))))
 
 (defn remove-patch-value
   "Remove the value at 'path' from obj."
