@@ -285,7 +285,7 @@
             (replace-patch-value obj parent-path
                                  (remove-patch-value parent (first (last segs)))))
           (cond (map? obj)
-                (dissoc obj (second (first segs)))
+                (dissoc obj (->key (second (first segs))))
                 (vector? obj)
                 (let [idx #?(:clj (Integer/parseInt (second (re-find #"/(\d+)" path)))
                              :cljs (js/parseInt (second (re-find #"/(\d+)" path))))]
