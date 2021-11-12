@@ -214,8 +214,25 @@
                                   :cljs (try (js/parseInt (second (re-find #"/(\d+)" path)))
                                              (catch js/Object e
                                                (throw (js/Error. (str "Move attempted on value that does not exist at '" path "'."))))))]
-                    (vec (concat (subvec obj 0 from-int) (subvec obj (inc from-int) (inc to-int))
-                                 [(get obj from-int)] (subvec obj (inc to-int)))))))
+                    (cond
+                      (= to-int from-int) obj
+                      (< to-int from-int)
+                      (vec
+                       (concat
+                        (subvec obj 0 to-int)
+                        [(nth obj from-int)]
+                        (subvec obj
+                                to-int
+                                from-int)
+                        (subvec obj
+                                (min (count obj) (inc from-int))
+                                (count obj))))
+                      (< from-int to-int)
+                      (vec (concat (subvec obj 0 from-int)
+                                   (subvec obj (inc from-int) (inc to-int))
+                                   [(get obj from-int)]
+                                   (subvec obj (inc to-int))))))))
+
           #?(:clj (throw (Exception. (str "Move attempted on value that does not exist at '" from "'.")))
              :cljs (throw (js/Error. (str "Move attempted on value that does not exist at '" from "'."))))))
       #?(:clj (throw (Exception. "Patch 'from' value must start with '/'"))
